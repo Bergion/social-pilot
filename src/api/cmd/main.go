@@ -28,7 +28,6 @@ func main() {
 
 	s3Client := s3.NewFromConfig(config.LoadAWSConfig())
 
-	mediator.RegisterHandler(commands.NewRegisterIntegrationCommandHandler(db))
 	mediator.RegisterHandler(commands.NewUploadFileCommandHandler(db, s3Client))
 
 	fmt.Println("Server started on :8080")

@@ -14,11 +14,6 @@ func NewRouter() http.Handler {
 	r.Use(middleware.Logger)
 	r.Use(middleware.Heartbeat("/health"))
 
-	integrationController := controllers.NewIntegrationController()
-
-	r.Post("/integrations/connect", integrationController.RegisterIntegration)
-	r.Put("/integrations/{id}", integrationController.UpdateIntegration)
-
 	mediaController := controllers.NewMediaController()
 
 	r.Post("/media/upload", mediaController.UploadFile)
