@@ -50,6 +50,10 @@ func (h *UploadFileCommandHandler) Handle(request UploadFileCommand,
 	var wg sync.WaitGroup
 
 	bucketName := os.Getenv("S3_BUCKET_NAME")
+	if bucketName == "" {
+		return mediator.Unit{}, errors.New("S3_BUCKET_NAME environment variable is not set")
+	}
+
 	resultChannel := make(chan UploadResult, len(request.Files))
 
 	// TODO limit the number of goroutines
@@ -61,7 +65,7 @@ func (h *UploadFileCommandHandler) Handle(request UploadFileCommand,
 			if err != nil {
 				resultChannel <- UploadResult{
 					Filename: fileHeader.Filename,
-					Key:      *new(string),
+					Key:      "",
 					Error:    err,
 				}
 				return
