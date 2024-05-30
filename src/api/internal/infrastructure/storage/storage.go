@@ -15,16 +15,21 @@ import (
 )
 
 type PresignedURL struct {
-	URL      string
-	Filename string
+	URL string
+	Key string
 }
 
 type FileStorage interface {
-	GeneratePresignedUrls(context.Context, []string) ([]PresignedURL, error)
+	GeneratePresignedUrls(context.Context, []string) (map[string]PresignedURL, error)
 }
 
 type s3FileStorage struct {
 	s3Client *s3.Client
+}
+
+type result struct {
+	Filename     string
+	PresignedURL PresignedURL
 }
 
 func NewAWSFileStorage() FileStorage {
@@ -33,7 +38,7 @@ func NewAWSFileStorage() FileStorage {
 }
 
 func (s *s3FileStorage) GeneratePresignedUrls(ctx context.Context,
-	filenames []string) ([]PresignedURL, error) {
+	filenames []string) (map[string]PresignedURL, error) {
 
 	// TODO Set limit
 	eg, egCtx := errgroup.WithContext(ctx)
@@ -41,11 +46,11 @@ func (s *s3FileStorage) GeneratePresignedUrls(ctx context.Context,
 	presignedClient := s3.NewPresignClient(s.s3Client)
 	bucketName := os.Getenv("S3_BUCKET_NAME")
 
-	presignedUrls := make([]PresignedURL, len(filenames))
-	for i, filename := range filenames {
-		i, filename := i, filename
+	resultChannel := make(chan result)
+	for _, filename := range filenames {
+		filename := filename
 		eg.Go(func() error {
-			key := fmt.Sprint(uuid.New(), filename)
+			key := fmt.Sprintf("%s_%s", uuid.New(), filename)
 			req, err := presignedClient.PresignPutObject(egCtx,
 				&s3.PutObjectInput{
 					Bucket: aws.String(bucketName),
@@ -55,14 +60,25 @@ func (s *s3FileStorage) GeneratePresignedUrls(ctx context.Context,
 			)
 
 			if err == nil {
-				presignedUrls[i] = PresignedURL{req.URL, filename}
+				resultChannel <- result{filename, PresignedURL{req.URL, key}}
 			}
 
 			return err
 		})
 	}
 
-	if err := eg.Wait(); err != nil {
+	var err error
+	go func() {
+		err = eg.Wait()
+		close(resultChannel)
+	}()
+
+	presignedUrls := make(map[string]PresignedURL)
+	for result := range resultChannel {
+		presignedUrls[result.Filename] = result.PresignedURL
+	}
+
+	if err != nil {
 		log.Print(err)
 		return nil, err
 	}
