@@ -1,33 +1,34 @@
 package controllers
 
 import (
+	"encoding/json"
 	"net/http"
 
-	"github.com/Bergion/social-pilot/internal/commands"
-	"github.com/Bergion/social-pilot/pkg/mediator"
+	"github.com/Bergion/social-pilot/internal/infrastructure/storage"
 )
 
 type MediaController struct {
+	storage storage.FileStorage
 }
 
-func NewMediaController() *MediaController {
-	return &MediaController{}
+func NewMediaController(storage storage.FileStorage) *MediaController {
+	return &MediaController{storage}
 }
 
-func (c *MediaController) UploadFile(w http.ResponseWriter, r *http.Request) {
-	r.ParseMultipartForm(10 << 20)
-	files, ok := r.MultipartForm.File["media"]
-	if !ok {
-		http.Error(w, "unknown file upload error", http.StatusBadRequest)
+func (c *MediaController) GetPresignedUrl(w http.ResponseWriter, r *http.Request) {
+	var filenames []string
+	if err := json.NewDecoder(r.Body).Decode(&filenames); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	_, err := mediator.Send[commands.UploadFileCommand, mediator.Unit](
-		commands.UploadFileCommand{Files: files}, r.Context())
+	presignedUrls, err := c.storage.GeneratePresignedUrls(r.Context(), filenames)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
+	response, _ := json.Marshal(presignedUrls)
+
+	w.Write(response)
 }
