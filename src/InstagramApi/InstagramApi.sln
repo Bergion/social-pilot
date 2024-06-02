@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34031.279
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InstagramApi", "InstagramApi\InstagramApi.csproj", "{C38561A9-1A73-4659-8DBC-E03A2E574FBD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C38561A9-1A73-4659-8DBC-E03A2E574FBD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C38561A9-1A73-4659-8DBC-E03A2E574FBD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C38561A9-1A73-4659-8DBC-E03A2E574FBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C38561A9-1A73-4659-8DBC-E03A2E574FBD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {80576FA1-DBB8-420B-B8BC-26E1435A6A55}
+	EndGlobalSection
+EndGlobal
