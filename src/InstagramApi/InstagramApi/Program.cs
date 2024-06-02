@@ -1,4 +1,5 @@
 using InstagramApi.Config;
+using InstagramApi.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +11,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.Configure<MongoDbConfig>(builder.Configuration.GetSection("MongoDb"));
+
+builder.Services.AddSingleton<IAuthService, AuthService>();
 
 var app = builder.Build();
 
