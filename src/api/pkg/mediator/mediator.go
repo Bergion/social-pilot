@@ -23,7 +23,7 @@ func RegisterHandler[Request any, Response any](handler RequestHandler[Request, 
 	requestType := reflect.TypeOf(request)
 	_, ok := requestHandlers[requestType]
 	if ok {
-		return errors.New(fmt.Sprint("registered handler already exists in the registry for message %s", requestType.String()))
+		return fmt.Errorf("registered handler already exists in the registry for message %s", requestType.String())
 	}
 
 	if handler == nil {

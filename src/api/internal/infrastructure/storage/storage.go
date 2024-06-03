@@ -7,6 +7,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/Bergion/social-pilot/internal/auth"
 	"github.com/Bergion/social-pilot/internal/config"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
@@ -40,17 +41,18 @@ func NewAWSFileStorage() FileStorage {
 func (s *s3FileStorage) GeneratePresignedUrls(ctx context.Context,
 	filenames []string) (map[string]PresignedURL, error) {
 
+	bucketName := os.Getenv("S3_BUCKET_NAME")
 	// TODO Set limit
 	eg, egCtx := errgroup.WithContext(ctx)
 
+	user, _ := auth.UserFromContext(ctx)
 	presignedClient := s3.NewPresignClient(s.s3Client)
-	bucketName := os.Getenv("S3_BUCKET_NAME")
 
 	resultChannel := make(chan result)
 	for _, filename := range filenames {
 		filename := filename
 		eg.Go(func() error {
-			key := fmt.Sprintf("%s_%s", uuid.New(), filename)
+			key := fmt.Sprintf("%s/%s_%s", user.Id, uuid.New(), filename)
 			req, err := presignedClient.PresignPutObject(egCtx,
 				&s3.PutObjectInput{
 					Bucket: aws.String(bucketName),

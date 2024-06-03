@@ -8,7 +8,7 @@ type User struct {
 	Email string
 }
 
-func GetUserFromContext(ctx context.Context) (User, bool) {
+func UserFromContext(ctx context.Context) (User, bool) {
 	// user, ok := ctx.Value("user").(User)
 
 	user, ok := User{Id: "1", Name: "D", Email: "dima.vintsyk@gmail.com"}, true

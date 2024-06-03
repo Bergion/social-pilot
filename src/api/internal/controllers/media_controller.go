@@ -17,6 +17,7 @@ func NewMediaController(storage storage.FileStorage) *MediaController {
 
 func (c *MediaController) GetPresignedUrl(w http.ResponseWriter, r *http.Request) {
 	var filenames []string
+	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewDecoder(r.Body).Decode(&filenames); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
