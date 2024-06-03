@@ -81,7 +81,7 @@ func (s *s3FileStorage) GeneratePresignedUrls(ctx context.Context,
 	}
 
 	if err != nil {
-		log.Print(err)
+		log.Println(err)
 		return nil, err
 	}
 
