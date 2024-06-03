@@ -1,6 +1,5 @@
 <script setup>
 import { ref } from 'vue'
-import TikTokIcon from '@/components/TikTokIcon.vue'
 
 const platforms = ref([
 	{
