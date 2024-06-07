@@ -11,4 +11,5 @@ type Post struct {
 	UserId       string             `bson:"userId" json:"userId"`
 	Status       int                `bson:"status" json:"status"`
 	ScheduledFor string             `bson:"scheduledFor" json:"scheduledFor"`
+	Platforms    []Platform         `bson:"platforms" json:"platforms"`
 }

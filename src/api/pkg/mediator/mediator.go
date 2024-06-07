@@ -7,9 +7,6 @@ import (
 	"reflect"
 )
 
-type Mediator interface {
-}
-
 type RequestHandler[Request any, Response any] interface {
 	Handle(request Request, ctx context.Context) (Response, error)
 }

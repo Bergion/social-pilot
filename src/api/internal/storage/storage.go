@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/Bergion/social-pilot/internal/auth"
-	"github.com/Bergion/social-pilot/internal/config"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/google/uuid"
@@ -33,8 +32,8 @@ type result struct {
 	PresignedURL PresignedURL
 }
 
-func NewAWSFileStorage() FileStorage {
-	s3Client := s3.NewFromConfig(config.LoadAWSConfig())
+func NewAWSFileStorage(cfg aws.Config) FileStorage {
+	s3Client := s3.NewFromConfig(cfg)
 	return &s3FileStorage{s3Client}
 }
 

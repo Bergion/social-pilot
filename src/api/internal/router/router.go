@@ -8,18 +8,16 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/rs/cors"
-	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func NewRouter(db *mongo.Database) http.Handler {
+func NewRouter(storage storage.FileStorage) http.Handler {
 	r := chi.NewRouter()
 
 	r.Use(middleware.Logger)
 	r.Use(middleware.Heartbeat("/health"))
-	storage := storage.NewAWSFileStorage()
 
 	mediaHandler := handlers.NewMediaHandler(storage)
-	postHandler := handlers.NewPostHandler(db)
+	postHandler := handlers.NewPostHandler()
 
 	r.Post("/media/upload", mediaHandler.GetPresignedUrl)
 	r.Post("/post", postHandler.CreatePost)

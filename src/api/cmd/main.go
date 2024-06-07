@@ -6,9 +6,14 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/Bergion/social-pilot/internal/commands"
 	"github.com/Bergion/social-pilot/internal/config"
 	"github.com/Bergion/social-pilot/internal/db"
 	"github.com/Bergion/social-pilot/internal/router"
+	"github.com/Bergion/social-pilot/internal/storage"
+	"github.com/Bergion/social-pilot/pkg/mediator"
+	"github.com/Bergion/social-pilot/pkg/publisher"
+	"github.com/aws/aws-sdk-go-v2/aws"
 )
 
 func main() {
@@ -20,12 +25,23 @@ func main() {
 	}
 	defer mongoClient.Close()
 
-	db := mongoClient.Client.Database("db")
+	awsCfg := config.LoadAWSConfig()
+	storage := storage.NewAWSFileStorage(awsCfg)
 
-	router := router.NewRouter(db)
+	registerHandlers(mongoClient, awsCfg)
+
+	router := router.NewRouter(storage)
 
 	fmt.Println("Server started on :8080")
 	if err := http.ListenAndServe(":8080", router); err != nil {
 		log.Fatal(err)
 	}
+}
+
+func registerHandlers(mongoClient *db.MongoClient, cfg aws.Config) {
+	publisher := publisher.NewSNSPublisher(cfg)
+
+	db := mongoClient.Client.Database("db")
+
+	mediator.RegisterHandler(commands.NewCreatePostHandler(db, publisher))
 }
