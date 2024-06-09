@@ -7,9 +7,11 @@ namespace InstagramApi.Data.Models
 	{
 		[BsonId]
 		[BsonRepresentation(BsonType.ObjectId)]
-		public string? UserId { get; set; }
+		public required string UserId { get; set; }
 
         public required string Token { get; set; }
+
+		public required string IgUserId { get; set; }
 
 		public static string CollectionName => "users";
 	}

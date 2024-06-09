@@ -1,18 +1,17 @@
+﻿using InstagramApi.Service;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InstagramApi.Controllers
 {
-	[ApiController]
-	[Route("[controller]")]
-	public class PostController : ControllerBase
-	{
-		private readonly ILogger<PostController> _logger;
+    [ApiController]
+    [Route("[controller]")]
+    public class PostController : ControllerBase
+    {
+        private readonly PostService _postService;
 
-		public PostController(ILogger<PostController> logger)
-		{
-			_logger = logger;
-		}
-
-
-	}
+        public PostController(PostService postService)
+        {
+            _postService = postService;
+        }
+    }
 }
