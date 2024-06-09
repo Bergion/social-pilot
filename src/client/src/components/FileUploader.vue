@@ -1,14 +1,40 @@
 <script setup lang="ts">
 import { ref, type Ref } from 'vue'
 import FilePreview from '@/components/FilePreview.vue'
+import { getPresignedURLs } from '@/api'
 
-const files: Ref<any> = ref([])
-const isDragging = ref(false)
+const emit = defineEmits(['uploaded']);
 
-const file: any = ref(null)
+const files: any = ref([]);
+const isDragging = ref(false);
+const fileInput: any = ref(null);
+const loading = ref(false);
 
-function onChange() {
-	files.value = [...file.value.files]
+async function onChange() {
+	loading.value = true;
+	files.value = [...fileInput.value.files];
+	try {
+		const presignedURLs = await getPresignedURLs(files.value.map((f: any)=> f.name));
+		const promises: Promise<string>[] = [];
+		files.value.forEach((f: any) => {
+			promises.push(uploadFile(presignedURLs[f.name].URL, f))
+		});
+		const urls = await Promise.all(promises);
+
+		emit('uploaded', urls.map(u => u.split('?')[0]));
+	} catch (err) {
+		console.log(err);
+	}
+
+	loading.value = false;
+}
+
+async function uploadFile(uploadURL: string, file: any):Promise<string> {
+	const result = await fetch(uploadURL, {
+ 		method: 'PUT',
+		body: file
+	});
+	return result.url;
 }
 
 function remove(i: number) {
@@ -26,7 +52,7 @@ function dragleave() {
 
 function drop(e: any) {
 	e.preventDefault();
-	file.value.files = e.dataTransfer.files;
+	fileInput.value.files = e.dataTransfer.files;
 	onChange();
 	isDragging.value = false;
 }
@@ -51,10 +77,9 @@ function drop(e: any) {
 						id="fileInput"
 						class="hidden-input"
 						@change="onChange"
-						ref="file"
+						ref="fileInput"
 						accept=".pdf,.jpg,.jpeg,.png"
 					/>
-
 					<label for="fileInput" class="file-label">
 						<div v-if="isDragging">Release to drop files here</div>
 						<div v-else>Drop files here or <u>click here</u> to upload</div>
@@ -65,6 +90,7 @@ function drop(e: any) {
         <v-col v-for="(file, index) in files" :key="file.name" :cols="4">
           <FilePreview 
 						:file="file"
+						:loading="loading"
 						@remove="remove(index)">
 					</FilePreview>
         </v-col>
