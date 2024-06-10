@@ -1,47 +1,48 @@
 package main
 
 import (
-	"fmt"
-	"log"
 	"net/http"
-	"os"
 
 	"github.com/Bergion/social-pilot/internal/commands"
 	"github.com/Bergion/social-pilot/internal/config"
 	"github.com/Bergion/social-pilot/internal/db"
+	"github.com/Bergion/social-pilot/internal/handlers"
 	"github.com/Bergion/social-pilot/internal/router"
 	"github.com/Bergion/social-pilot/internal/storage"
 	"github.com/Bergion/social-pilot/pkg/mediator"
 	"github.com/Bergion/social-pilot/pkg/publisher"
-	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/Bergion/social-pilot/server"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.uber.org/fx"
 )
 
 func main() {
-	config.LoadConfig()
-
-	mongoClient, err := db.NewMongoClient(os.Getenv("CONNECTION_STRING"))
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer mongoClient.Close()
-
-	awsCfg := config.LoadAWSConfig()
-	storage := storage.NewAWSFileStorage(awsCfg)
-
-	registerHandlers(mongoClient, awsCfg)
-
-	router := router.NewRouter(storage)
-
-	fmt.Println("Server started on :8080")
-	if err := http.ListenAndServe(":8080", router); err != nil {
-		log.Fatal(err)
-	}
+	fx.New(
+		fx.Provide(
+			server.NewHTTPServer,
+			router.NewRouter,
+			handlers.NewMediaHandler,
+			handlers.NewPostHandler,
+			db.NewMongoClient,
+			config.LoadAWSConfig,
+			fx.Annotate(
+				storage.NewAWSFileStorage,
+				fx.As(new(storage.FileStorage)),
+			),
+			fx.Annotate(
+				publisher.NewSNSPublisher,
+				fx.As(new(publisher.Publisher)),
+			),
+		),
+		fx.Invoke(
+			func(*http.Server) {},
+			config.LoadConfig,
+			registerHandlers,
+		),
+	).Run()
 }
 
-func registerHandlers(mongoClient *db.MongoClient, cfg aws.Config) {
-	publisher := publisher.NewSNSPublisher(cfg)
-
-	db := mongoClient.Client.Database("db")
-
+func registerHandlers(client *mongo.Client, publisher publisher.Publisher) {
+	db := client.Database("db")
 	mediator.RegisterHandler(commands.NewCreatePostHandler(db, publisher))
 }
