@@ -2,7 +2,9 @@ package commands
 
 import (
 	"context"
+	"encoding/json"
 	"log"
+	"os"
 
 	"github.com/Bergion/social-pilot/internal/auth"
 	"github.com/Bergion/social-pilot/internal/models"
@@ -44,9 +46,15 @@ func (h *CreatePostHandler) Handle(request CreatePost, ctx context.Context) (int
 		return nil, err
 	}
 
+	post.Id = res.InsertedID
 	// remove magic number
 	if post.Status == 2 {
-		// h.publisher.Publish(ctx)
+		message, err := json.Marshal(post)
+		if err != nil {
+			return nil, err
+		}
+		topicArn := os.Getenv("TOPIC_ARN")
+		h.publisher.Publish(ctx, topicArn, string(message))
 	}
 
 	return res.InsertedID, nil

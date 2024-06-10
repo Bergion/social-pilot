@@ -17,6 +17,7 @@ import (
 )
 
 func main() {
+	config.LoadConfig()
 	fx.New(
 		fx.Provide(
 			server.NewHTTPServer,
@@ -36,7 +37,6 @@ func main() {
 		),
 		fx.Invoke(
 			func(*http.Server) {},
-			config.LoadConfig,
 			registerHandlers,
 		),
 	).Run()
