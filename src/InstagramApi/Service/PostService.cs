@@ -1,5 +1,6 @@
 ﻿using InstagramApi.Api;
 using InstagramApi.Data.Models;
+using InstagramApi.Global.ApiRequests.ContainerRequests;
 using InstagramApi.Global.Requests;
 
 namespace InstagramApi.Service
@@ -24,7 +25,29 @@ namespace InstagramApi.Service
         {
             ArgumentNullException.ThrowIfNull(request);
 
-            var containerId = await _containerApi.CreateImageContainerAsync();
+            if (!ContainsInstagram(request))
+            {
+                return;
+            }
+
+            var containerRequest = new CreateImageContainerRequest()
+            {
+                AccessToken = user.Token,
+                Caption = request.Text,
+                IgUserId = user.IgUserId,
+                ImageUrl = request.Media[0].Url
+            };
+
+            var containerId = await _containerApi.CreateImageContainerAsync(containerRequest);
+
+            var publishContainerRequest = new PublishContainerRequest()
+            {
+                IgUserId = user.IgUserId,
+                AccessToken = user.Token,
+                CreationId = containerId,
+            };
+
+            await _containerApi.PublishContainerAsync(publishContainerRequest);
         }
 
         private bool ContainsInstagram(PostRequest request)

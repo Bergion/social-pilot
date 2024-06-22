@@ -4,6 +4,8 @@ namespace InstagramApi.Global.Requests
 {
     public class PostRequest
     {
+        public required string UserId { get; set; }
+
         public string? Text { get; set; }
 
         public IReadOnlyList<MediaData> Media { get; set; } = [];

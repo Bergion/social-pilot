@@ -6,6 +6,7 @@ using InstagramApi.Service;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.Configure<MongoDbConfig>(builder.Configuration.GetSection("MongoDb"));
+builder.Services.Configure<SqsConfig>(builder.Configuration.GetSection("Sqs"));
 
 // Add services to the container.
 builder.Services.AddControllers();

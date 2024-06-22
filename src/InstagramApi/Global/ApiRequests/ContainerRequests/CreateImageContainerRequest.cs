@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-
-namespace InstagramApi.Global.ApiRequests.ContainerRequests
+﻿namespace InstagramApi.Global.ApiRequests.ContainerRequests
 {
     public class CreateImageContainerRequest : BaseApiRequest
     {
