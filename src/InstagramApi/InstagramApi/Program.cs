@@ -1,3 +1,4 @@
+using Amazon.SQS;
 using InstagramApi.Api;
 using InstagramApi.Config;
 using InstagramApi.Controllers;
@@ -14,10 +15,13 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddScoped<IContainerApi, ContainerApi>();
+builder.Services.AddHttpClient();
 
-builder.Services.AddSingleton<IAuthService, AuthService>();
-builder.Services.AddSingleton<PostQueueService>();
+builder.Services.AddTransient<IContainerApi, ContainerApi>();
+builder.Services.AddTransient<IPostService, PostService>();
+builder.Services.AddTransient<IAuthService, AuthService>();
+
+builder.Services.AddSingleton<IAmazonSQS, AmazonSQSClient>();
 
 builder.Services.AddHostedService<PostQueueService>();
 

@@ -11,16 +11,14 @@ namespace InstagramApi.Controllers
     public class PostQueueService : BackgroundService
     {
         private readonly IAmazonSQS _sqsService;
+        private readonly IServiceScopeFactory _serviceScopeFactory;
         private readonly SqsConfig _sqsConfig;
-        private readonly IPostService _postService;
-        private readonly IAuthService _authService;
 
-        public PostQueueService(IAmazonSQS sqsService, IOptions<SqsConfig> sqsConfig, IPostService postService, IAuthService authService)
+        public PostQueueService(IAmazonSQS sqsService, IOptions<SqsConfig> sqsConfig, IServiceScopeFactory serviceScopeFactory)
         {
             _sqsService = sqsService;
+            _serviceScopeFactory = serviceScopeFactory;
             _sqsConfig = sqsConfig.Value;
-            _postService = postService;
-            _authService = authService;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -34,17 +32,22 @@ namespace InstagramApi.Controllers
 
                 var messageResponse = await _sqsService.ReceiveMessageAsync(receiveMessageRequest);
 
+                using var scope = _serviceScopeFactory.CreateScope();
+
+                var authService = scope.ServiceProvider.GetRequiredService<IAuthService>();
+                var postService = scope.ServiceProvider.GetRequiredService<IPostService>();
+
                 foreach (var message in messageResponse.Messages)
                 {
                     var postRequest = JsonConvert.DeserializeObject<PostRequest>(message.Body);
 
                     ArgumentNullException.ThrowIfNull(postRequest);
 
-                    var user = await _authService.GetAsync(postRequest.UserId);
+                    var user = await authService.GetAsync(postRequest.UserId);
 
                     ArgumentNullException.ThrowIfNull(user);
 
-                    await _postService.CreatePostAsync(postRequest, user);
+                    await postService.CreatePostAsync(postRequest, user);
 
                     // Delete the message after processing
                     await _sqsService.DeleteMessageAsync(_sqsConfig.PostQueue, message.ReceiptHandle);
