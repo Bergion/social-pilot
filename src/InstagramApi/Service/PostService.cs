@@ -1,16 +1,30 @@
-﻿using InstagramApi.Global.Requests;
+﻿using InstagramApi.Api;
+using InstagramApi.Data.Models;
+using InstagramApi.Global.Requests;
 
 namespace InstagramApi.Service
 {
-    public class PostService
+    public interface IPostService
+    {
+        Task CreatePostAsync(PostRequest request, User user);
+    }
+
+    public class PostService : IPostService
     {
         private const string Instagram = "Instagram";
 
-        public async Task CreatePostAsync(PostRequest request)
+        private readonly IContainerApi _containerApi;
+
+        public PostService(IContainerApi containerApi)
+        {
+            _containerApi = containerApi;
+        }
+
+        public async Task CreatePostAsync(PostRequest request, User user)
         {
             ArgumentNullException.ThrowIfNull(request);
 
-            
+            var containerId = await _containerApi.CreateImageContainerAsync();
         }
 
         private bool ContainsInstagram(PostRequest request)

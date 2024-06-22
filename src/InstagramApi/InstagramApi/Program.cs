@@ -1,5 +1,6 @@
 using InstagramApi.Api;
 using InstagramApi.Config;
+using InstagramApi.Controllers;
 using InstagramApi.Service;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,6 +16,9 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IContainerApi, ContainerApi>();
 
 builder.Services.AddSingleton<IAuthService, AuthService>();
+builder.Services.AddSingleton<PostQueueService>();
+
+builder.Services.AddHostedService<PostQueueService>();
 
 var app = builder.Build();
 

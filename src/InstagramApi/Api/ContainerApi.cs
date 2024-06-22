@@ -6,7 +6,8 @@ namespace InstagramApi.Api
 {
     public interface IContainerApi
     {
-        Task<string> CreateImageContainer(CreateImageContainerRequest request, string igUserId);
+        Task<string> CreateImageContainerAsync(CreateImageContainerRequest request);
+        Task PublishContainerAsync(PublishContainerRequest request);
     }
 
     public class ContainerApi : IContainerApi
@@ -19,15 +20,39 @@ namespace InstagramApi.Api
             _httpClient.BaseAddress = new Uri("https://graph.facebook.com/v20.0/");
         }
 
-        public async Task<string> CreateImageContainer(CreateImageContainerRequest request, string igUserId)
+        public async Task<string> CreateImageContainerAsync(CreateImageContainerRequest request)
         {
-            var responseMessage = await _httpClient.PostAsJsonAsync($"{igUserId}/media", request);
+            var req = new HttpRequestMessage(HttpMethod.Post, $"{request.IgUserId}/media");
+
+            req.Content = new FormUrlEncodedContent(new Dictionary<string, string?>
+            {
+                { "access_token", request.AccessToken },
+                { "image_url", request.ImageUrl },
+                { "caption", request.Caption },
+            });
+
+            var responseMessage = await _httpClient.SendAsync(req);
 
             responseMessage.EnsureSuccessStatusCode();
 
             var response = await responseMessage.Content.ReadFromJsonAsync<CreateContainerResponse>();
 
             return response?.Id;
+        }
+
+        public async Task PublishContainerAsync(PublishContainerRequest request)
+        {
+            var req = new HttpRequestMessage(HttpMethod.Post, $"{request.IgUserId}/media");
+
+            req.Content = new FormUrlEncodedContent(new Dictionary<string, string?>
+            {
+                { "access_token", request.AccessToken },
+                { "creation_id", request.CreationId },
+            });
+
+            var responseMessage = await _httpClient.SendAsync(req);
+
+            responseMessage.EnsureSuccessStatusCode();
         }
     }
 }
