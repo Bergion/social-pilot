@@ -23,7 +23,7 @@ type FileStorage interface {
 	GeneratePresignedUrls(context.Context, []string) (map[string]PresignedURL, error)
 }
 
-type s3FileStorage struct {
+type S3FileStorage struct {
 	s3Client *s3.Client
 }
 
@@ -32,12 +32,12 @@ type result struct {
 	PresignedURL PresignedURL
 }
 
-func NewAWSFileStorage(cfg aws.Config) FileStorage {
+func NewAWSFileStorage(cfg aws.Config) *S3FileStorage {
 	s3Client := s3.NewFromConfig(cfg)
-	return &s3FileStorage{s3Client}
+	return &S3FileStorage{s3Client}
 }
 
-func (s *s3FileStorage) GeneratePresignedUrls(ctx context.Context,
+func (s *S3FileStorage) GeneratePresignedUrls(ctx context.Context,
 	filenames []string) (map[string]PresignedURL, error) {
 
 	bucketName := os.Getenv("S3_BUCKET_NAME")

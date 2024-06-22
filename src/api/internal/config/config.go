@@ -25,6 +25,5 @@ func LoadAWSConfig() aws.Config {
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	return cfg
 }
