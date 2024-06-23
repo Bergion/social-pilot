@@ -16,9 +16,11 @@ namespace InstagramApi.Controllers
         }
 
         [HttpPost]
-		public async Task<IActionResult> SetToken(SetTokenModel model)
+		public async Task<IActionResult> AuthenticateViaCode(CodeAuthenticationModel model)
 		{
-            await _authService.CreateUserOrUpdateTokenAsync(model.UserId, model.IgUserId, model.Token);
+            var response = await _authService.GetAccessTokenViaCodeAsync(model.Code);
+
+            await _authService.CreateUserOrUpdateTokenAsync(model.UserId, response.IgUserId, response.AccessToken);
 
             return Ok();
 		}

@@ -1,5 +1,7 @@
-﻿using InstagramApi.Config;
+﻿using InstagramApi.Api;
+using InstagramApi.Config;
 using InstagramApi.Data.Models;
+using InstagramApi.Global.ApiResponses;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using System.Data;
@@ -9,21 +11,24 @@ namespace InstagramApi.Service
     public interface IAuthService
 	{
         Task CreateUserOrUpdateTokenAsync(string userId, string igUserId, string token);
+        Task<GetAccessTokenResponse> GetAccessTokenViaCodeAsync(string code);
         Task<User?> GetAsync(string userId);
     }
 
 	public class AuthService : IAuthService
 	{
 		private readonly IMongoCollection<User> _users;
+        private readonly IAuthApi _authApi;
 
-		public AuthService(IOptions<MongoDbConfig> mongoConfig)
+        public AuthService(IOptions<MongoDbConfig> mongoConfig, IAuthApi authApi)
 		{
 			var mongoClient = new MongoClient(mongoConfig.Value.ConnectionString);
 
 			var mongoDatabase = mongoClient.GetDatabase(mongoConfig.Value.DatabaseName);
 
 			_users = mongoDatabase.GetCollection<User>(User.CollectionName);
-		}
+            _authApi = authApi;
+        }
 
 		public async Task CreateUserOrUpdateTokenAsync(string userId, string igUserId, string token)
 		{
@@ -66,5 +71,10 @@ namespace InstagramApi.Service
 
 		public async Task<User?> GetAsync(string userId) =>
 			await _users.Find(u => u.UserId == userId).FirstOrDefaultAsync();
+
+		public async Task<GetAccessTokenResponse> GetAccessTokenViaCodeAsync(string code)
+		{
+			return await _authApi.GetAccessTokenAsync(code);
+		}
 	}
 }

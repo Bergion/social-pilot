@@ -8,12 +8,15 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Data", "Data\Data.csproj", "{D9C8D838-6899-4F59-A782-E4D1D4DE1D29}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Api", "Api\Api.csproj", "{A002FEC3-861D-47C0-9606-4B76F07F286A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{391D2AB6-0633-4990-B66B-07A4D1657EFF} = {391D2AB6-0633-4990-B66B-07A4D1657EFF}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Service", "Service\Service.csproj", "{65CD47A8-FEA9-44D9-AC2B-CCD1A10CA285}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Config", "Config\Config.csproj", "{391D2AB6-0633-4990-B66B-07A4D1657EFF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Global", "Global\Global.csproj", "{A97A0B37-58C7-4092-9C5F-DB628855B995}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Global", "Global\Global.csproj", "{A97A0B37-58C7-4092-9C5F-DB628855B995}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
