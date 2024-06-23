@@ -2,6 +2,6 @@
 {
     public class CreateStoryContainerRequest : BaseApiRequest
     {
-        public int MyProperty { get; set; }
+        public required string MediaUrl { get; set; }
     }
 }

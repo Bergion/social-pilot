@@ -46,26 +46,30 @@ namespace InstagramApi.Service
         {
             var platformData = request.Platforms.First(p => p.Name == Instagram);
 
-            switch (platformData.PostType)
+            return platformData.PostType switch
             {
-                case Global.Enums.PostType.Post:
-                    var containerRequest = new CreatePostContainerRequest()
-                    {
-                        AccessToken = user.Token,
-                        Caption = request.Text,
-                        IgUserId = user.IgUserId,
-                        ImageUrl = request.Media[0].Url,
-                    };
-
-                    return await _containerApi.CreateImageContainerAsync(containerRequest);
-
-                case Global.Enums.PostType.Story:
-                    break;
-                case Global.Enums.PostType.Reels:
-                    break;
-                default:
-                    throw new NotImplementedException($"Post type {platformData.PostType} is not supported");
-            }
+                Global.Enums.PostType.Post => await _containerApi.CreatePostContainerAsync(new CreatePostContainerRequest()
+                {
+                    AccessToken = user.Token,
+                    Caption = request.Text,
+                    IgUserId = user.IgUserId,
+                    ImageUrl = request.Media[0].Url,
+                }),
+                Global.Enums.PostType.Story => await _containerApi.CreateStoryContainerAsync(new CreateStoryContainerRequest()
+                {
+                    AccessToken = user.Token,
+                    IgUserId = user.IgUserId,
+                    MediaUrl = request.Media[0].Url,
+                }),
+                Global.Enums.PostType.Reels => await _containerApi.CreateReelContainerAsync(new CreateReelContainerRequest()
+                {
+                    AccessToken = user.Token,
+                    IgUserId = user.IgUserId,
+                    Caption = request.Text,
+                    VideoUrl = request.Media[0].Url,
+                }),
+                _ => throw new NotImplementedException($"Post type {platformData.PostType} is not supported"),
+            };
         }
 
         private bool ContainsInstagram(PostRequest request)

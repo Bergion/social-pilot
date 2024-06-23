@@ -21,7 +21,10 @@ builder.Services.AddTransient<IContainerApi, ContainerApi>();
 builder.Services.AddTransient<IPostService, PostService>();
 builder.Services.AddTransient<IAuthService, AuthService>();
 
-builder.Services.AddSingleton<IAmazonSQS, AmazonSQSClient>();
+var options = builder.Configuration.GetAWSOptions();
+var client = options.CreateServiceClient<IAmazonSQS>();
+
+builder.Services.AddSingleton(client);
 
 builder.Services.AddHostedService<PostQueueService>();
 
