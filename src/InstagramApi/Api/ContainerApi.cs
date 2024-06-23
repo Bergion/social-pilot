@@ -6,7 +6,7 @@ namespace InstagramApi.Api
 {
     public interface IContainerApi
     {
-        Task<string> CreateImageContainerAsync(CreateImageContainerRequest request);
+        Task<string> CreateImageContainerAsync(CreatePostContainerRequest request);
         Task PublishContainerAsync(PublishContainerRequest request);
     }
 
@@ -20,7 +20,7 @@ namespace InstagramApi.Api
             _httpClient.BaseAddress = new Uri("https://graph.facebook.com/v20.0/");
         }
 
-        public async Task<string> CreateImageContainerAsync(CreateImageContainerRequest request)
+        public async Task<string> CreateImageContainerAsync(CreatePostContainerRequest request)
         {
             var req = new HttpRequestMessage(HttpMethod.Post, $"{request.IgUserId}/media");
 

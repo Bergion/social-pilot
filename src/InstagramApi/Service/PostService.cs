@@ -30,15 +30,7 @@ namespace InstagramApi.Service
                 return;
             }
 
-            var containerRequest = new CreateImageContainerRequest()
-            {
-                AccessToken = user.Token,
-                Caption = request.Text,
-                IgUserId = user.IgUserId,
-                ImageUrl = request.Media[0].Url
-            };
-
-            var containerId = await _containerApi.CreateImageContainerAsync(containerRequest);
+            var containerId = await CreateContainerAsync(request, user);
 
             var publishContainerRequest = new PublishContainerRequest()
             {
@@ -48,6 +40,32 @@ namespace InstagramApi.Service
             };
 
             await _containerApi.PublishContainerAsync(publishContainerRequest);
+        }
+
+        private async Task<string> CreateContainerAsync(PostRequest request, User user)
+        {
+            var platformData = request.Platforms.First(p => p.Name == Instagram);
+
+            switch (platformData.PostType)
+            {
+                case Global.Enums.PostType.Post:
+                    var containerRequest = new CreatePostContainerRequest()
+                    {
+                        AccessToken = user.Token,
+                        Caption = request.Text,
+                        IgUserId = user.IgUserId,
+                        ImageUrl = request.Media[0].Url,
+                    };
+
+                    return await _containerApi.CreateImageContainerAsync(containerRequest);
+
+                case Global.Enums.PostType.Story:
+                    break;
+                case Global.Enums.PostType.Reels:
+                    break;
+                default:
+                    throw new NotImplementedException($"Post type {platformData.PostType} is not supported");
+            }
         }
 
         private bool ContainsInstagram(PostRequest request)
