@@ -44,20 +44,34 @@ namespace InstagramApi.Controllers
 
                 foreach (var message in messageResponse.Messages)
                 {
-                    var postRequest = JsonConvert.DeserializeObject<PostRequest>(message.Body);
-
-                    ArgumentNullException.ThrowIfNull(postRequest);
-
-                    var user = await authService.GetAsync(postRequest.UserId);
-
-                    ArgumentNullException.ThrowIfNull(user);
-
-                    await postService.CreatePostAsync(postRequest, user);
-
-                    // Delete the message after processing
-                    await _sqsService.DeleteMessageAsync(_sqsConfig.PostQueue, message.ReceiptHandle);
+                    try
+                    {
+                        await CreatePostAsync(message, authService, postService);
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine($"Failed to handle a message: {e}");
+                    }
+                    finally
+                    {
+                        // Delete the message after processing
+                        await _sqsService.DeleteMessageAsync(_sqsConfig.PostQueue, message.ReceiptHandle);
+                    }
                 }
             }
+        }
+
+        private async Task CreatePostAsync(Message message, IAuthService authService, IPostService postService)
+        {
+            var postRequest = JsonConvert.DeserializeObject<PostRequest>(message.Body);
+
+            ArgumentNullException.ThrowIfNull(postRequest);
+
+            var user = await authService.GetAsync(postRequest.UserId);
+
+            ArgumentNullException.ThrowIfNull(user);
+
+            await postService.CreatePostAsync(postRequest, user);
         }
     }
 }

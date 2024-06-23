@@ -6,6 +6,8 @@ using InstagramApi.Controllers;
 using InstagramApi.Service;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Configuration.AddEnvironmentVariables();
+builder.Configuration.AddUserSecrets<Program>();
 
 builder.Services.Configure<MongoDbConfig>(builder.Configuration.GetSection("MongoDb"));
 builder.Services.Configure<SqsConfig>(builder.Configuration.GetSection("Sqs"));
