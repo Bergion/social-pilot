@@ -1,3 +1,4 @@
+using Amazon;
 using Amazon.SQS;
 using InstagramApi.Api;
 using InstagramApi.Config;
@@ -8,6 +9,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.Configure<MongoDbConfig>(builder.Configuration.GetSection("MongoDb"));
 builder.Services.Configure<SqsConfig>(builder.Configuration.GetSection("Sqs"));
+var awsSection = builder.Configuration.GetSection("AWS");
+builder.Services.Configure<AwsConfig>(awsSection);
 
 // Add services to the container.
 builder.Services.AddControllers();
@@ -21,10 +24,8 @@ builder.Services.AddTransient<IContainerApi, ContainerApi>();
 builder.Services.AddTransient<IPostService, PostService>();
 builder.Services.AddTransient<IAuthService, AuthService>();
 
-var options = builder.Configuration.GetAWSOptions();
-var client = options.CreateServiceClient<IAmazonSQS>();
-
-builder.Services.AddSingleton(client);
+var awsConfig = awsSection.Get<AwsConfig>();
+builder.Services.AddSingleton<IAmazonSQS, AmazonSQSClient>(x => new AmazonSQSClient(awsConfig.AccessKey, awsConfig.SecretKey, RegionEndpoint.EUCentral1));
 
 builder.Services.AddHostedService<PostQueueService>();
 

@@ -18,7 +18,7 @@ namespace InstagramApi.Controllers
         [HttpPost]
 		public async Task<IActionResult> SetToken(SetTokenModel model)
 		{
-            await _authService.CreateUserOrUpdateTokenAsync(model.UserId, model.Token);
+            await _authService.CreateUserOrUpdateTokenAsync(model.UserId, model.IgUserId, model.Token);
 
             return Ok();
 		}

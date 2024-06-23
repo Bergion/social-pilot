@@ -32,6 +32,11 @@ namespace InstagramApi.Controllers
 
                 var messageResponse = await _sqsService.ReceiveMessageAsync(receiveMessageRequest);
 
+                if (messageResponse.Messages.Count == 0)
+                {
+                    continue;
+                }
+
                 using var scope = _serviceScopeFactory.CreateScope();
 
                 var authService = scope.ServiceProvider.GetRequiredService<IAuthService>();

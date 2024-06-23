@@ -8,7 +8,7 @@ namespace InstagramApi.Service
 {
     public interface IAuthService
 	{
-        Task CreateUserOrUpdateTokenAsync(string userId, string token);
+        Task CreateUserOrUpdateTokenAsync(string userId, string igUserId, string token);
         Task<User?> GetAsync(string userId);
     }
 
@@ -25,13 +25,13 @@ namespace InstagramApi.Service
 			_users = mongoDatabase.GetCollection<User>(User.CollectionName);
 		}
 
-		public async Task CreateUserOrUpdateTokenAsync(string userId, string token)
+		public async Task CreateUserOrUpdateTokenAsync(string userId, string igUserId, string token)
 		{
             var user = await GetAsync(userId);
 
             if (user == null)
             {
-                await CreateUserAsync(userId, "", token);
+                await CreateUserAsync(userId, igUserId, token);
             }
             else
             {
