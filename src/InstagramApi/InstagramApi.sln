@@ -1,0 +1,58 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34031.279
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InstagramApi", "InstagramApi\InstagramApi.csproj", "{C38561A9-1A73-4659-8DBC-E03A2E574FBD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Data", "Data\Data.csproj", "{D9C8D838-6899-4F59-A782-E4D1D4DE1D29}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Api", "Api\Api.csproj", "{A002FEC3-861D-47C0-9606-4B76F07F286A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{391D2AB6-0633-4990-B66B-07A4D1657EFF} = {391D2AB6-0633-4990-B66B-07A4D1657EFF}
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Service", "Service\Service.csproj", "{65CD47A8-FEA9-44D9-AC2B-CCD1A10CA285}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Config", "Config\Config.csproj", "{391D2AB6-0633-4990-B66B-07A4D1657EFF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Global", "Global\Global.csproj", "{A97A0B37-58C7-4092-9C5F-DB628855B995}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C38561A9-1A73-4659-8DBC-E03A2E574FBD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C38561A9-1A73-4659-8DBC-E03A2E574FBD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C38561A9-1A73-4659-8DBC-E03A2E574FBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C38561A9-1A73-4659-8DBC-E03A2E574FBD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D9C8D838-6899-4F59-A782-E4D1D4DE1D29}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D9C8D838-6899-4F59-A782-E4D1D4DE1D29}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D9C8D838-6899-4F59-A782-E4D1D4DE1D29}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D9C8D838-6899-4F59-A782-E4D1D4DE1D29}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A002FEC3-861D-47C0-9606-4B76F07F286A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A002FEC3-861D-47C0-9606-4B76F07F286A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A002FEC3-861D-47C0-9606-4B76F07F286A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A002FEC3-861D-47C0-9606-4B76F07F286A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{65CD47A8-FEA9-44D9-AC2B-CCD1A10CA285}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{65CD47A8-FEA9-44D9-AC2B-CCD1A10CA285}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{65CD47A8-FEA9-44D9-AC2B-CCD1A10CA285}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{65CD47A8-FEA9-44D9-AC2B-CCD1A10CA285}.Release|Any CPU.Build.0 = Release|Any CPU
+		{391D2AB6-0633-4990-B66B-07A4D1657EFF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{391D2AB6-0633-4990-B66B-07A4D1657EFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{391D2AB6-0633-4990-B66B-07A4D1657EFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{391D2AB6-0633-4990-B66B-07A4D1657EFF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A97A0B37-58C7-4092-9C5F-DB628855B995}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A97A0B37-58C7-4092-9C5F-DB628855B995}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A97A0B37-58C7-4092-9C5F-DB628855B995}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A97A0B37-58C7-4092-9C5F-DB628855B995}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {80576FA1-DBB8-420B-B8BC-26E1435A6A55}
+	EndGlobalSection
+EndGlobal
